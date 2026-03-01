@@ -48,7 +48,7 @@ const Login: React.FC = () => {
             console.log('Login successful as ADMIN');
             localStorage.setItem('isAuthenticated', 'true');
             localStorage.setItem('userRole', 'ADMIN');
-            navigate('/dashboard'); // Or wherever the admin dashboard is
+            navigate('/admin'); // Or wherever the admin dashboard is
 
         } catch (err) {
             setError("Une erreur est survenue lors de la connexion.");

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
@@ -22,22 +23,22 @@ const Dashboard: React.FC = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div className="card bg-base-200 shadow-sm">
+                        <div className="card bg-base-200 shadow-sm border border-primary/20 hover:border-primary transition-colors">
                             <div className="card-body">
-                                <h2 className="card-title">Réseau Bus</h2>
+                                <h2 className="card-title text-primary">Réseau Bus</h2>
                                 <p>Gérer les lignes, arrêts et horaires de bus classiques.</p>
                                 <div className="card-actions justify-end mt-4">
-                                    <button className="btn btn-primary btn-sm">Gérer</button>
+                                    <Link to="/admin/bus" className="btn btn-primary btn-sm">Gérer</Link>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="card bg-base-200 shadow-sm">
+                        <div className="card bg-base-200 shadow-sm border border-secondary/20 hover:border-secondary transition-colors">
                             <div className="card-body">
-                                <h2 className="card-title">Réseau BRT</h2>
+                                <h2 className="card-title text-secondary">Réseau BRT</h2>
                                 <p>Superviser les corridors et l'état de la flotte BRT.</p>
                                 <div className="card-actions justify-end mt-4">
-                                    <button className="btn btn-primary btn-sm">Gérer</button>
+                                    <Link to="/admin/brt" className="btn btn-secondary btn-sm">Gérer</Link>
                                 </div>
                             </div>
                         </div>

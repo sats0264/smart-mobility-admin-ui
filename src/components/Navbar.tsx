@@ -35,6 +35,14 @@ const Navbar: React.FC = () => {
         </div>
         <div className="flex-1 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <ul className="menu menu-horizontal px-1 font-medium text-sm md:text-base gap-1 flex-nowrap justify-center min-w-max w-full">
+            {isAuthenticated && (
+              <li>
+                <Link to="/admin" className="hover:bg-primary/10 text-primary font-bold rounded-lg flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                  Accueil
+                </Link>
+              </li>
+            )}
             <li><a className="hover:bg-base-200 rounded-lg">A propos</a></li>
             <li><a className="hover:bg-base-200 rounded-lg">Réseau Bus</a></li>
             <li><a className="hover:bg-base-200 rounded-lg">Lignes BRT</a></li>

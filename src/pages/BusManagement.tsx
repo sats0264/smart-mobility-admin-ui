@@ -17,6 +17,7 @@ const BusManagement: React.FC = () => {
     // Create Section Form
     const [selectedLineId, setSelectedLineId] = useState<number | ''>('');
     const [sectionOrder, setSectionOrder] = useState<number | ''>('');
+    const [stationName, setStationName] = useState('');
     const [priceIncrement, setPriceIncrement] = useState<number | ''>('');
 
     const loadData = async () => {
@@ -51,7 +52,7 @@ const BusManagement: React.FC = () => {
             setNewLineName('');
             loadData(); // Refresh list
         } catch (error) {
-            alert("Erreur lors de la création de la ligne. Vérifiez si le backend (port 8080) est accessible.");
+            alert("Erreur lors de la création de la ligne. Vérifiez si le Gateway (port 8765) est accessible.");
         }
     };
 
@@ -63,10 +64,12 @@ const BusManagement: React.FC = () => {
             await pricingService.createFareSection({
                 lineId: Number(selectedLineId),
                 sectionOrder: Number(sectionOrder),
+                stationName: stationName.trim() || undefined,
                 priceIncrement: Number(priceIncrement)
             });
             setSelectedLineId('');
             setSectionOrder('');
+            setStationName('');
             setPriceIncrement('');
             loadData(); // Refresh list
         } catch (error) {
@@ -142,26 +145,28 @@ const BusManagement: React.FC = () => {
                                             <thead>
                                                 <tr>
                                                     <th>Ligne ID</th>
-                                                    <th>Ordre Section</th>
-                                                    <th>Incrément Tarifaire (FCFA)</th>
+                                                    <th>Station / Section</th>
+                                                    <th>Ordre</th>
+                                                    <th>Incrément (FCFA)</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {sections.filter(s => lines.some(l => l.id === s.lineId)).map((section) => (
                                                     <tr key={section.id}>
                                                         <td className="font-semibold">{section.lineId}</td>
-                                                        <td>Section {section.sectionOrder}</td>
+                                                        <td>{section.stationName || `Section ${section.sectionOrder}`}</td>
+                                                        <td>N°{section.sectionOrder}</td>
                                                         <td className="text-success font-bold">+{section.priceIncrement}</td>
                                                     </tr>
                                                 ))}
                                                 {sections.length === 0 && (
-                                                    <tr><td colSpan={3} className="text-center opacity-50 italic py-4">Aucune section tarifaire définie.</td></tr>
+                                                    <tr><td colSpan={4} className="text-center opacity-50 italic py-4">Aucune section tarifaire définie.</td></tr>
                                                 )}
                                             </tbody>
                                         </table>
                                     </div>
 
-                                    <div className="divider text-sm text-base-content/60">Ajouter une section</div>
+                                    <div className="divider text-sm text-base-content/60">Ajouter une section/station</div>
 
                                     <form onSubmit={handleCreateSection} className="flex flex-col gap-3">
                                         <div className="flex gap-2 w-full">
@@ -171,14 +176,21 @@ const BusManagement: React.FC = () => {
                                                 onChange={(e) => setSelectedLineId(e.target.value ? Number(e.target.value) : '')}
                                                 required
                                             >
-                                                <option value="" disabled>Choisir une Ligne</option>
-                                                {lines.map(l => <option key={l.id} value={l.id}>{l.name} (ID: {l.id})</option>)}
+                                                <option value="" disabled>Ligne</option>
+                                                {lines.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
                                             </select>
+                                            <input
+                                                type="text"
+                                                placeholder="Nom Station"
+                                                className="input input-bordered flex-1"
+                                                value={stationName}
+                                                onChange={(e) => setStationName(e.target.value)}
+                                            />
                                             <input
                                                 type="number"
                                                 min="1"
-                                                placeholder="Ordre (ex: 1)"
-                                                className="input input-bordered w-32"
+                                                placeholder="N° Ordre"
+                                                className="input input-bordered w-24"
                                                 value={sectionOrder}
                                                 onChange={(e) => setSectionOrder(e.target.value ? Number(e.target.value) : '')}
                                                 required
@@ -190,7 +202,7 @@ const BusManagement: React.FC = () => {
                                                     type="number"
                                                     min="0"
                                                     step="0.01"
-                                                    placeholder="Prix (ex: 150)"
+                                                    placeholder="Prix Incrément"
                                                     className="input input-bordered join-item flex-1"
                                                     value={priceIncrement}
                                                     onChange={(e) => setPriceIncrement(e.target.value ? Number(e.target.value) : '')}

@@ -1,6 +1,6 @@
-import keycloak from '../keycloak';
+import { apiService } from './apiService';
 
-const API_URL = 'http://localhost:8765/admin';
+const API_URL = '/admin';
 
 export interface TransportLine {
     id?: number;
@@ -16,6 +16,7 @@ export interface FareSection {
     lineId: number;
     sectionOrder: number;
     priceIncrement: number;
+    stationName?: string;
     createdAt?: string;
     updatedAt?: string;
 }
@@ -38,31 +39,23 @@ export interface DiscountRule {
     updatedAt?: string;
 }
 
-const authenticatedFetch = async (url: string, options: RequestInit = {}) => {
-    const headers = {
-        ...options.headers,
-        'Authorization': `Bearer ${keycloak.token}`,
-        'Content-Type': 'application/json',
-    };
-    return fetch(url, { ...options, headers });
-};
-
 export const pricingService = {
     // Transport Lines
     getTransportLines: async (): Promise<TransportLine[]> => {
         try {
-            const response = await authenticatedFetch(`${API_URL}/transport-lines`);
-            if (!response.ok) throw new Error('Failed to fetch transport lines');
-            return response.json();
+            const response = await apiService.get<TransportLine[]>(`${API_URL}/transport-lines`);
+            if (response.data) {
+                return response.data;
+            }
+            throw new Error(response.error || 'Failed to fetch transport lines');
         } catch (error) {
             console.error('Error fetching transport lines:', error);
-
+            // Fallback data for UI testing if backend is down
             const zone1 = ['Petersen', 'Grande Mosquée', 'Place de la Nation', 'Dial Diop', 'Grand Dakar', 'Liberté 1', 'Sacré Coeur', 'Liberté 5', 'Liberté 6'];
             const zone2 = ['Khar Yalla', 'Scat Urbam', 'Cardinal Hyacinthe Thiandoum', 'Grand Médine', 'Police Parcelles', 'Croisement 22'];
             const zone3 = ['Parcelles', 'Ndingala', 'Golf Sud', 'Dalal Jam', 'Fith Mith', 'Golf Nord', 'Gueule Tapée', 'Guédiawaye'];
             const terStations = ['Dakar', 'Colobane', 'Hann', 'Baux Maraîchers', 'Pikine', 'Thiaroye', 'Yeumbeul', 'Keur Massar', 'Rufisque', 'Bargny', 'Diamniadio'];
 
-            // Fallback data for UI testing if backend is down
             return [
                 { id: 1, name: 'Ligne 1: Palais - Ouakam', transportType: 'BUS' },
                 { id: 2, name: 'Ligne 7: Thiaroye - Petersen', transportType: 'BUS' },
@@ -76,51 +69,35 @@ export const pricingService = {
     },
 
     createTransportLine: async (line: TransportLine): Promise<TransportLine> => {
-        try {
-            const response = await authenticatedFetch(`${API_URL}/transport-lines`, {
-                method: 'POST',
-                body: JSON.stringify(line),
-            });
-            if (!response.ok) throw new Error('Failed to create transport line');
-            return response.json();
-        } catch (error) {
-            console.error('Error creating transport line:', error);
-            throw error;
+        const response = await apiService.post<TransportLine>(`${API_URL}/transport-lines`, line);
+        if (response.data) {
+            return response.data;
         }
+        throw new Error(response.error || 'Failed to create transport line');
     },
 
     // Fare Sections
     getFareSections: async (): Promise<FareSection[]> => {
-        try {
-            const response = await authenticatedFetch(`${API_URL}/fare-sections`);
-            if (!response.ok) throw new Error('Failed to fetch fare sections');
-            return response.json();
-        } catch (error) {
-            console.error('Error fetching fare sections:', error);
-            return [];
-        }
+        const response = await apiService.get<FareSection[]>(`${API_URL}/fare-sections`);
+        return response.data || [];
     },
 
     createFareSection: async (section: FareSection): Promise<FareSection> => {
-        try {
-            const response = await authenticatedFetch(`${API_URL}/fare-sections`, {
-                method: 'POST',
-                body: JSON.stringify(section),
-            });
-            if (!response.ok) throw new Error('Failed to create fare section');
-            return response.json();
-        } catch (error) {
-            console.error('Error creating fare section:', error);
-            throw error;
+        const response = await apiService.post<FareSection>(`${API_URL}/fare-sections`, section);
+        if (response.data) {
+            return response.data;
         }
+        throw new Error(response.error || 'Failed to create fare section');
     },
 
     // Zones
     getZones: async (): Promise<Zone[]> => {
         try {
-            const response = await authenticatedFetch(`${API_URL}/zones`);
-            if (!response.ok) throw new Error('Failed to fetch zones');
-            return response.json();
+            const response = await apiService.get<Zone[]>(`${API_URL}/zones`);
+            if (response.data) {
+                return response.data;
+            }
+            throw new Error(response.error || 'Failed to fetch zones');
         } catch (error) {
             console.error('Error fetching zones:', error);
             // Fallback data
@@ -133,25 +110,21 @@ export const pricingService = {
     },
 
     createZone: async (zone: Zone): Promise<Zone> => {
-        try {
-            const response = await authenticatedFetch(`${API_URL}/zones`, {
-                method: 'POST',
-                body: JSON.stringify(zone),
-            });
-            if (!response.ok) throw new Error('Failed to create zone');
-            return response.json();
-        } catch (error) {
-            console.error('Error creating zone:', error);
-            throw error;
+        const response = await apiService.post<Zone>(`${API_URL}/zones`, zone);
+        if (response.data) {
+            return response.data;
         }
+        throw new Error(response.error || 'Failed to create zone');
     },
 
     // Discount Rules
     getDiscountRules: async (): Promise<DiscountRule[]> => {
         try {
-            const response = await authenticatedFetch(`${API_URL}/discount-rules`);
-            if (!response.ok) throw new Error('Failed to fetch discount rules');
-            return response.json();
+            const response = await apiService.get<DiscountRule[]>(`${API_URL}/discount-rules`);
+            if (response.data) {
+                return response.data;
+            }
+            throw new Error(response.error || 'Failed to fetch discount rules');
         } catch (error) {
             console.error('Error fetching discount rules:', error);
             return [
@@ -162,28 +135,18 @@ export const pricingService = {
     },
 
     createDiscountRule: async (rule: Partial<DiscountRule>): Promise<DiscountRule> => {
-        try {
-            const response = await authenticatedFetch(`${API_URL}/discount-rules`, {
-                method: 'POST',
-                body: JSON.stringify(rule),
-            });
-            if (!response.ok) throw new Error('Failed to create discount rule');
-            return response.json();
-        } catch (error) {
-            console.error('Error creating discount rule:', error);
-            throw error;
+        const response = await apiService.post<DiscountRule>(`${API_URL}/discount-rules`, rule);
+        if (response.data) {
+            return response.data;
         }
+        throw new Error(response.error || 'Failed to create discount rule');
     },
 
     deleteDiscountRule: async (id: number): Promise<void> => {
-        try {
-            const response = await authenticatedFetch(`${API_URL}/discount-rules/${id}`, {
-                method: 'DELETE',
-            });
-            if (!response.ok) throw new Error('Failed to delete discount rule');
-        } catch (error) {
-            console.error('Error deleting discount rule:', error);
-            throw error;
+        const response = await apiService.delete(`${API_URL}/discount-rules/${id}`);
+        if (response.status !== 0 && response.status < 400) {
+            return;
         }
+        throw new Error(response.error || 'Failed to delete discount rule');
     }
 };

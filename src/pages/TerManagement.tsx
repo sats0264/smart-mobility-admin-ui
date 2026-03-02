@@ -11,6 +11,15 @@ const TerManagement: React.FC = () => {
     const [sections, setSections] = useState<FareSection[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    // Create Line Form
+    const [newLineName, setNewLineName] = useState('');
+
+    // Create Section Form
+    const [selectedLineId, setSelectedLineId] = useState<number | ''>('');
+    const [sectionOrder, setSectionOrder] = useState<number | ''>('');
+    const [stationName, setStationName] = useState('');
+    const [priceIncrement, setPriceIncrement] = useState<number | ''>(500);
+
     const loadData = async () => {
         setIsLoading(true);
         try {
@@ -19,26 +28,7 @@ const TerManagement: React.FC = () => {
                 pricingService.getFareSections()
             ]);
             setLines(fetchedLines.filter(l => l.transportType === 'TER'));
-
-            // Generate some mock fare sections based on the TER stations if none exist
-            if (fetchedSections.length === 0) {
-                const terLine = fetchedLines.find(l => l.transportType === 'TER');
-                if (terLine && terLine.stations) {
-                    const mockSections = terLine.stations.map((station, index) => ({
-                        id: 100 + index,
-                        lineId: terLine.id || 0,
-                        sectionOrder: index + 1,
-                        priceIncrement: 500, // Explicitly standardizing the TER pricing mapping to sections
-                        stationName: station
-                    }));
-                    setSections(mockSections as any);
-                } else {
-                    setSections([]);
-                }
-            } else {
-                setSections(fetchedSections);
-            }
-
+            setSections(fetchedSections);
         } catch (error) {
             console.error("Failed to load data", error);
         } finally {
@@ -49,6 +39,43 @@ const TerManagement: React.FC = () => {
     useEffect(() => {
         loadData();
     }, []);
+
+    const handleCreateLine = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!newLineName.trim()) return;
+
+        try {
+            await pricingService.createTransportLine({
+                name: newLineName,
+                transportType: 'TER'
+            });
+            setNewLineName('');
+            loadData();
+        } catch (error) {
+            alert("Erreur lors de la création de la ligne TER.");
+        }
+    };
+
+    const handleCreateSection = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (selectedLineId === '' || sectionOrder === '') return;
+
+        try {
+            await pricingService.createFareSection({
+                lineId: Number(selectedLineId),
+                sectionOrder: Number(sectionOrder),
+                stationName: stationName.trim(),
+                priceIncrement: Number(priceIncrement)
+            });
+            setSelectedLineId('');
+            setSectionOrder('');
+            setStationName('');
+            setPriceIncrement(500);
+            loadData();
+        } catch (error) {
+            alert("Erreur lors de la création de l'arrêt TER.");
+        }
+    };
 
     return (
         <div className="min-h-screen flex flex-col font-sans bg-base-100">
@@ -84,33 +111,32 @@ const TerManagement: React.FC = () => {
                                         Infrastructures TER
                                     </h2>
 
-                                    <ul className="list-none p-0 flex flex-col gap-3">
+                                    <ul className="list-none p-0 flex flex-col gap-3 mb-6">
                                         {lines.map((line) => (
                                             <li key={line.id} className="bg-base-100 rounded-lg shadow-sm border border-base-300 overflow-hidden">
-                                                <div className="p-4 flex justify-between items-center bg-error/10">
+                                                <div className="p-4 flex justify-between items-center bg-error/5">
                                                     <div>
                                                         <span className="font-bold text-lg text-error">{line.name}</span>
-                                                        <p className="text-sm opacity-70">Ligne ferroviaire principale reliant le centre-ville à la périphérie.</p>
+                                                        <p className="text-xs opacity-70">Réseau ferré express.</p>
                                                     </div>
-                                                    <div className="badge badge-error badge-outline text-xs hidden sm:flex">ID: {line.id}</div>
+                                                    <div className="badge badge-error badge-outline text-xs">ID: {line.id}</div>
                                                 </div>
-
-                                                {line.stations && line.stations.length > 0 && (
-                                                    <div className="p-4 border-t border-error/20">
-                                                        <h3 className="font-bold text-sm mb-3">Parcours ({line.stations.length} gares)</h3>
-                                                        <ul className="steps steps-vertical lg:steps-horizontal w-full overflow-x-auto text-xs pb-4">
-                                                            {line.stations.map((station, idx) => (
-                                                                <li key={idx} data-content={idx + 1} className="step step-error hover:font-bold">{station}</li>
-                                                            ))}
-                                                        </ul>
-                                                    </div>
-                                                )}
                                             </li>
                                         ))}
-                                        {lines.length === 0 && (
-                                            <div className="text-center opacity-50 py-4 italic">Aucune ligne TER définie.</div>
-                                        )}
                                     </ul>
+
+                                    <div className="divider text-sm text-base-content/60">Ajouter une ligne TER</div>
+                                    <form onSubmit={handleCreateLine} className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            placeholder="Nom de la ligne (ex: TER Dakar-AIBD)"
+                                            className="input input-bordered w-full focus:input-error"
+                                            value={newLineName}
+                                            onChange={(e) => setNewLineName(e.target.value)}
+                                            required
+                                        />
+                                        <button type="submit" className="btn btn-error">Ajouter</button>
+                                    </form>
                                 </div>
                             </div>
 
@@ -119,45 +145,82 @@ const TerManagement: React.FC = () => {
                                 <div className="card-body">
                                     <h2 className="card-title text-2xl mb-4 text-warning flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.121 15.536c-1.171 1.952-3.07 1.952-4.242 0-1.172-1.953-1.172-5.119 0-7.072 1.171-1.952 3.07-1.952 4.242 0M8 10.5h4m-4 3h4m9-1.5a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                        Sections Tarifaires (Zones)
+                                        Gares & Tarifs par zone
                                     </h2>
 
-                                    <div className="bg-warning/10 p-4 rounded-lg border border-warning/20 mb-4 whitespace-normal text-sm">
-                                        <span className="font-bold">Règle de calcul :</span> Le prix de base est défini à 500 FCFA. Chaque section (gare) traversée ajoute un saut tarifaire de 500 FCFA selon la logique inscrite en base.
-                                    </div>
-
-                                    <div className="overflow-y-auto max-h-80 pr-2">
+                                    <div className="overflow-y-auto max-h-64 pr-2 mb-6">
                                         <table className="table table-zebra table-sm w-full bg-base-100 shadow-sm rounded-lg">
-                                            <thead className="bg-base-300 text-base-content">
+                                            <thead>
                                                 <tr>
-                                                    <th>Départ</th>
                                                     <th>Gare (Section)</th>
                                                     <th className="text-right">Incrément</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {sections.map((section, idx) => (
+                                                {sections.filter(s => lines.some(l => l.id === s.lineId)).map((section) => (
                                                     <tr key={section.id}>
-                                                        {idx === 0 && (
-                                                            <td rowSpan={sections.length} className="font-bold border-r border-base-200 bg-base-200/50 align-top pt-4">Dakar</td>
-                                                        )}
                                                         <td>
                                                             <div className="flex items-center gap-2">
-                                                                <span className="badge badge-accent badge-sm">{section.sectionOrder}</span>
-                                                                <span className="font-medium">{(section as any).stationName || `Section ${section.sectionOrder}`}</span>
+                                                                <span className="badge badge-error badge-sm">{section.sectionOrder}</span>
+                                                                <span className="font-medium">{section.stationName || `Secteur ${section.sectionOrder}`}</span>
                                                             </div>
                                                         </td>
-                                                        <td className="text-right text-success font-bold text-lg">+{section.priceIncrement} FCFA</td>
+                                                        <td className="text-right text-success font-bold">+{section.priceIncrement} FCFA</td>
                                                     </tr>
                                                 ))}
-                                                {sections.length === 0 && (
-                                                    <tr>
-                                                        <td colSpan={3} className="text-center italic opacity-50 py-4">Aucune section tarifaire définie.</td>
-                                                    </tr>
-                                                )}
                                             </tbody>
                                         </table>
                                     </div>
+
+                                    <div className="divider text-sm text-base-content/60">Ajouter une Gare / Section</div>
+                                    <form onSubmit={handleCreateSection} className="flex flex-col gap-3">
+                                        <div className="flex gap-2">
+                                            <select
+                                                className="select select-bordered flex-1 focus:select-warning"
+                                                value={selectedLineId}
+                                                onChange={(e) => setSelectedLineId(e.target.value ? Number(e.target.value) : '')}
+                                                required
+                                            >
+                                                <option value="" disabled>Ligne TER</option>
+                                                {lines.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+                                            </select>
+                                            <input
+                                                type="text"
+                                                placeholder="Nom de la Gare"
+                                                className="input input-bordered flex-1 focus:input-warning"
+                                                value={stationName}
+                                                onChange={(e) => setStationName(e.target.value)}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                placeholder="Ordre"
+                                                className="input input-bordered w-24 focus:input-warning"
+                                                value={sectionOrder}
+                                                onChange={(e) => setSectionOrder(e.target.value ? Number(e.target.value) : '')}
+                                                required
+                                            />
+                                            <div className="join flex-1">
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    placeholder="Prix"
+                                                    className="input input-bordered join-item w-full focus:input-warning"
+                                                    value={priceIncrement}
+                                                    onChange={(e) => {
+                                                        const val = e.target.value;
+                                                        setPriceIncrement(val === '' ? '' : Number(val));
+                                                    }}
+                                                    required
+                                                />
+                                                <span className="join-item btn pointer-events-none bg-base-300">FCFA</span>
+                                            </div>
+                                            <button type="submit" className="btn btn-warning text-white">Ajouter</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
 

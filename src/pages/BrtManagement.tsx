@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { pricingService } from '../services/pricingService';
-import type { TransportLine, Zone, DiscountRule } from '../services/pricingService';
+import type { TransportLine, Zone, DiscountRule, FareSection } from '../services/pricingService';
 
 const BrtManagement: React.FC = () => {
     const navigate = useNavigate();
@@ -23,17 +23,27 @@ const BrtManagement: React.FC = () => {
     const [newPercentage, setNewPercentage] = useState<number | ''>('');
     const [newCondition, setNewCondition] = useState('BRT');
 
+    // Create Section Form
+    const [selectedLineId, setSelectedLineId] = useState<number | ''>('');
+    const [sectionOrder, setSectionOrder] = useState<number | ''>('');
+    const [stationName, setStationName] = useState('');
+    const [priceIncrement, setPriceIncrement] = useState<number | ''>(0);
+
+    const [sections, setSections] = useState<FareSection[]>([]);
+
     const loadData = async () => {
         setIsLoading(true);
         try {
-            const [fetchedLines, fetchedZones, fetchedRules] = await Promise.all([
+            const [fetchedLines, fetchedZones, fetchedRules, fetchedSections] = await Promise.all([
                 pricingService.getTransportLines(),
                 pricingService.getZones(),
-                pricingService.getDiscountRules()
+                pricingService.getDiscountRules(),
+                pricingService.getFareSections()
             ]);
             setLines(fetchedLines.filter(l => l.transportType === 'BRT'));
             setZones(fetchedZones);
             setRules(fetchedRules);
+            setSections(fetchedSections);
         } catch (error) {
             console.error("Failed to load data", error);
         } finally {
@@ -104,6 +114,27 @@ const BrtManagement: React.FC = () => {
             } catch (error) {
                 alert("Erreur lors de la suppression.");
             }
+        }
+    };
+
+    const handleCreateSection = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (selectedLineId === '' || sectionOrder === '') return;
+
+        try {
+            await pricingService.createFareSection({
+                lineId: Number(selectedLineId),
+                sectionOrder: Number(sectionOrder),
+                stationName: stationName.trim(),
+                priceIncrement: Number(priceIncrement) || 0
+            });
+            setSelectedLineId('');
+            setSectionOrder('');
+            setStationName('');
+            setPriceIncrement(0);
+            loadData();
+        } catch (error) {
+            alert("Erreur lors de la création de l'arrêt BRT.");
         }
     };
 
@@ -189,6 +220,61 @@ const BrtManagement: React.FC = () => {
                                             required
                                         />
                                         <button type="submit" className="btn btn-secondary">Ajouter</button>
+                                    </form>
+
+                                    <div className="divider text-sm text-base-content/60 mt-6">Arrêts du réseau ({sections.filter(s => lines.some(l => l.id === s.lineId)).length})</div>
+                                    <div className="overflow-y-auto max-h-48 pr-2">
+                                        <table className="table table-zebra table-xs">
+                                            <thead>
+                                                <tr>
+                                                    <th>Corridor</th>
+                                                    <th>Station</th>
+                                                    <th>Ordre</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {sections.filter(s => lines.some(l => l.id === s.lineId)).map((section) => (
+                                                    <tr key={section.id}>
+                                                        <td className="opacity-70">{lines.find(l => l.id === section.lineId)?.name}</td>
+                                                        <td className="font-bold">{section.stationName}</td>
+                                                        <td>N°{section.sectionOrder}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div className="divider text-sm text-base-content/60">Ajouter un arrêt</div>
+                                    <form onSubmit={handleCreateSection} className="flex flex-col gap-2">
+                                        <div className="flex gap-2">
+                                            <select
+                                                className="select select-bordered select-sm flex-1"
+                                                value={selectedLineId}
+                                                onChange={(e) => setSelectedLineId(e.target.value ? Number(e.target.value) : '')}
+                                                required
+                                            >
+                                                <option value="" disabled>Corridor</option>
+                                                {lines.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+                                            </select>
+                                            <input
+                                                type="text"
+                                                placeholder="Station"
+                                                className="input input-bordered input-sm flex-1"
+                                                value={stationName}
+                                                onChange={(e) => setStationName(e.target.value)}
+                                                required
+                                            />
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                placeholder="Ordre"
+                                                className="input input-bordered input-sm w-16"
+                                                value={sectionOrder}
+                                                onChange={(e) => setSectionOrder(e.target.value ? Number(e.target.value) : '')}
+                                                required
+                                            />
+                                            <button type="submit" className="btn btn-secondary btn-sm">OK</button>
+                                        </div>
                                     </form>
                                 </div>
                             </div>

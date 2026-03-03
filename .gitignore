@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+smart-mobility-admin-ui.iml
 
 # Editor directories and files
 .vscode/*

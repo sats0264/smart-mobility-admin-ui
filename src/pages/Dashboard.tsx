@@ -25,6 +25,16 @@ const Dashboard: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div className="card bg-base-200 shadow-sm border border-primary/20 hover:border-primary transition-colors">
                             <div className="card-body">
+                                <h2 className="card-title text-primary">Gestion du Catalogue</h2>
+                                <p>Définir les offres d'abonnements et de pass mobilité.</p>
+                                <div className="card-actions justify-end mt-4">
+                                    <Link to="/admin/catalog" className="btn btn-primary btn-sm">Gérer les Offres</Link>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="card bg-base-200 shadow-sm border border-primary/20 hover:border-primary transition-colors">
+                            <div className="card-body">
                                 <h2 className="card-title text-primary">Réseau Bus</h2>
                                 <p>Gérer les lignes, arrêts et horaires de bus classiques.</p>
                                 <div className="card-actions justify-end mt-4">
@@ -49,6 +59,16 @@ const Dashboard: React.FC = () => {
                                 <p>Contrôler la régularité et les tarifs par zone du Train Express Régional.</p>
                                 <div className="card-actions justify-end mt-4">
                                     <Link to="/admin/ter" className="btn btn-error btn-sm">Gérer</Link>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="card bg-base-200 shadow-sm border border-accent/20 hover:border-accent transition-colors">
+                            <div className="card-body">
+                                <h2 className="card-title text-accent">Remises & Tarifs</h2>
+                                <p>Gérer les règles de réduction (Off-peak, Loyalty, etc.)</p>
+                                <div className="card-actions justify-end mt-4">
+                                    <Link to="/admin/discounts" className="btn btn-accent btn-sm">Gérer</Link>
                                 </div>
                             </div>
                         </div>

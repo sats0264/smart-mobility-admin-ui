@@ -45,6 +45,8 @@ const Navbar: React.FC = () => {
                 <li><Link to="/admin/bus" className="hover:bg-base-200 rounded-lg">Réseau Bus</Link></li>
                 <li><Link to="/admin/brt" className="hover:bg-base-200 rounded-lg">Lignes BRT</Link></li>
                 <li><Link to="/admin/ter" className="hover:bg-base-200 rounded-lg">Horaires TER</Link></li>
+                <li><Link to="/admin/discounts" className="hover:bg-base-200 rounded-lg">Remises</Link></li>
+                <li><Link to="/admin/catalog" className="hover:bg-base-200 rounded-lg">Catalogue</Link></li>
               </>
             )}
             <li><Link to="/" className="hover:bg-base-200 rounded-lg">A propos</Link></li>

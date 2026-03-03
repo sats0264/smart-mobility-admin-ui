@@ -6,6 +6,8 @@ import Dashboard from './pages/Dashboard';
 import BusManagement from './pages/BusManagement';
 import BrtManagement from './pages/BrtManagement';
 import TerManagement from './pages/TerManagement';
+import DiscountManagement from './pages/DiscountManagement';
+import CatalogManagement from './pages/CatalogManagement';
 
 function App() {
   return (
@@ -41,6 +43,22 @@ function App() {
         element={
           <ProtectedRoute requiredRole="ROLE_ADMIN">
             <TerManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/discounts"
+        element={
+          <ProtectedRoute requiredRole="ROLE_ADMIN">
+            <DiscountManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/catalog"
+        element={
+          <ProtectedRoute requiredRole="ROLE_ADMIN">
+            <CatalogManagement />
           </ProtectedRoute>
         }
       />

@@ -48,6 +48,9 @@ class ApiService {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
+      if (response.status === 204) {
+        return { data: {} as T, status: 204 };
+      }
       const data = await response.json();
       return { data, status: response.status };
     } catch (error) {

@@ -6,8 +6,8 @@ import Dashboard from './pages/Dashboard';
 import BusManagement from './pages/BusManagement';
 import BrtManagement from './pages/BrtManagement';
 import TerManagement from './pages/TerManagement';
-import DiscountManagement from './pages/DiscountManagement';
 import CatalogManagement from './pages/CatalogManagement';
+import RulesManagement from './pages/RulesManagement';
 
 function App() {
   return (
@@ -50,7 +50,7 @@ function App() {
         path="/admin/discounts"
         element={
           <ProtectedRoute requiredRole="ROLE_ADMIN">
-            <DiscountManagement />
+            <RulesManagement />
           </ProtectedRoute>
         }
       />

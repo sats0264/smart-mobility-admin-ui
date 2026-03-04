@@ -3,23 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { pricingService } from '../services/pricingService';
-import type { TransportLine, Zone, DiscountRule, FareSection } from '../services/pricingService';
+import type { TransportLine, FareSection } from '../services/pricingService';
 
 const BrtManagement: React.FC = () => {
     const navigate = useNavigate();
     const [lines, setLines] = useState<TransportLine[]>([]);
-    const [zones, setZones] = useState<Zone[]>([]);
-    const [rules, setRules] = useState<DiscountRule[]>([]);
     const [sections, setSections] = useState<FareSection[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedLineId, setSelectedLineId] = useState<number | null>(null);
 
     // Form States
     const [newLineName, setNewLineName] = useState('');
-    const [newZoneNumber, setNewZoneNumber] = useState<number | ''>('');
-    const [newRuleType, setNewRuleType] = useState('OFFPEAK');
-    const [newPercentage, setNewPercentage] = useState<number | ''>('');
-    const [newCondition] = useState('BRT');
     const [sectionOrder, setSectionOrder] = useState<number | ''>('');
     const [stationName, setStationName] = useState('');
     const [zone, setZone] = useState<number | ''>('');
@@ -28,15 +22,11 @@ const BrtManagement: React.FC = () => {
     const loadData = async () => {
         setIsLoading(true);
         try {
-            const [fetchedLines, fetchedZones, fetchedRules, fetchedSections] = await Promise.all([
+            const [fetchedLines, fetchedSections] = await Promise.all([
                 pricingService.getTransportLines(),
-                pricingService.getZones(),
-                pricingService.getDiscountRules(),
                 pricingService.getFareSections()
             ]);
             setLines(fetchedLines.filter(l => l.transportType === 'BRT'));
-            setZones(fetchedZones);
-            setRules(fetchedRules.filter(r => r.condition?.includes('BRT')));
             setSections(fetchedSections);
         } catch (error) {
             console.error("Failed to load data", error);
@@ -119,48 +109,6 @@ const BrtManagement: React.FC = () => {
             loadData();
         } catch (error) {
             alert("Erreur lors de la suppression.");
-        }
-    };
-
-    const handleCreateZone = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (newZoneNumber === '') return;
-        try {
-            await pricingService.createZone({ zoneNumber: Number(newZoneNumber) });
-            setNewZoneNumber('');
-            loadData();
-        } catch (error) {
-            alert("Erreur lors de la création de la zone.");
-        }
-    };
-
-    const handleCreateRule = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (newPercentage === '') return;
-        try {
-            await pricingService.createDiscountRule({
-                ruleType: newRuleType,
-                percentage: Number(newPercentage),
-                priority: 3,
-                condition: newCondition,
-                active: true
-            });
-            setNewPercentage('');
-            loadData();
-        } catch (error) {
-            alert("Erreur lors de la création de la règle.");
-        }
-    };
-
-    const handleDeleteRule = async (id: number | undefined) => {
-        if (!id) return;
-        if (window.confirm("Supprimer cette réduction ?")) {
-            try {
-                await pricingService.deleteDiscountRule(id);
-                loadData();
-            } catch (error) {
-                alert("Erreur lors de la suppression.");
-            }
         }
     };
 
@@ -307,57 +255,6 @@ const BrtManagement: React.FC = () => {
                                             <p className="text-2xl font-black text-base-content/40">SÉLECTIONNEZ UN CORRIDOR BRT</p>
                                         </div>
                                     )}
-                                </div>
-                            </div>
-
-                            {/* ZONES & RULES SECTION */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                {/* Zones */}
-                                <div className="card bg-base-200 shadow-sm border border-accent/20">
-                                    <div className="card-body">
-                                        <h2 className="card-title text-2xl mb-6 text-accent">Zones Tarifaires</h2>
-                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
-                                            {zones.map((zone) => (
-                                                <div key={zone.id} className="bg-base-100 border-2 border-accent/20 p-4 rounded-2xl flex flex-col items-center">
-                                                    <span className="text-[10px] font-bold text-accent mb-1 uppercase">Zone</span>
-                                                    <span className="text-3xl font-black text-accent">{zone.zoneNumber}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <form onSubmit={handleCreateZone} className="flex gap-2">
-                                            <input type="number" min="1" placeholder="Nouvelle zone..." className="input input-bordered focus:input-accent w-full" value={newZoneNumber} onChange={(e) => setNewZoneNumber(e.target.value ? Number(e.target.value) : '')} required />
-                                            <button type="submit" className="btn btn-accent">Ajouter</button>
-                                        </form>
-                                    </div>
-                                </div>
-
-                                {/* Rules */}
-                                <div className="card bg-base-200 shadow-sm border border-info/20">
-                                    <div className="card-body">
-                                        <h2 className="card-title text-2xl mb-6 text-info">Réductions BRT</h2>
-                                        <div className="space-y-3 mb-6">
-                                            {rules.map((rule) => (
-                                                <div key={rule.id} className="bg-base-100 p-4 rounded-2xl border border-info/10 flex justify-between items-center">
-                                                    <div>
-                                                        <p className="font-bold text-sm tracking-tight">{rule.ruleType}</p>
-                                                        <p className="text-xs text-info font-black">-{rule.percentage}% Réduction</p>
-                                                    </div>
-                                                    <button onClick={() => handleDeleteRule(rule.id)} className="btn btn-circle btn-xs btn-ghost text-error">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                                    </button>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <form onSubmit={handleCreateRule} className="grid grid-cols-2 gap-3">
-                                            <select className="select select-bordered col-span-2" value={newRuleType} onChange={e => setNewRuleType(e.target.value)}>
-                                                <option value="OFFPEAK">Off-Peak</option>
-                                                <option value="LOYALTY">Loyalty</option>
-                                                <option value="STUDENT">Student</option>
-                                            </select>
-                                            <input type="number" placeholder="%" className="input input-bordered w-full" value={newPercentage} onChange={e => setNewPercentage(e.target.value ? Number(e.target.value) : '')} required />
-                                            <button type="submit" className="btn btn-info">Add Rule</button>
-                                        </form>
-                                    </div>
                                 </div>
                             </div>
 

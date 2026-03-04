@@ -36,6 +36,10 @@ export interface DiscountRule {
     condition: string;
     startHour?: string;
     endHour?: string;
+    startDay?: number;
+    endDay?: number;
+    startDate?: string;
+    endDate?: string;
     active: boolean;
     createdAt?: string;
     updatedAt?: string;

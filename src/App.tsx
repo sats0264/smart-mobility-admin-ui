@@ -8,6 +8,7 @@ import BrtManagement from './pages/BrtManagement';
 import TerManagement from './pages/TerManagement';
 import CatalogManagement from './pages/CatalogManagement';
 import RulesManagement from './pages/RulesManagement';
+import TestQRGenerator from './pages/TestQRGenerator';
 
 function App() {
   return (
@@ -59,6 +60,14 @@ function App() {
         element={
           <ProtectedRoute requiredRole="ROLE_ADMIN">
             <CatalogManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/test-qr"
+        element={
+          <ProtectedRoute requiredRole="ROLE_ADMIN">
+            <TestQRGenerator />
           </ProtectedRoute>
         }
       />

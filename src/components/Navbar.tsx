@@ -44,11 +44,6 @@ const Navbar: React.FC = () => {
                     Accueil
                   </Link>
                 </li>
-                <li><Link to="/admin/bus" className="hover:bg-base-200 rounded-lg">Réseau Bus</Link></li>
-                <li><Link to="/admin/brt" className="hover:bg-base-200 rounded-lg">Lignes BRT</Link></li>
-                <li><Link to="/admin/ter" className="hover:bg-base-200 rounded-lg">Horaires TER</Link></li>
-                <li><Link to="/admin/discounts" className="hover:bg-base-200 rounded-lg">Remises</Link></li>
-                <li><Link to="/admin/catalog" className="hover:bg-base-200 rounded-lg">Catalogue</Link></li>
 
                 {/* DROPDOWN: Gestion Réseau */}
                 <li className="dropdown dropdown-hover">
@@ -75,6 +70,13 @@ const Navbar: React.FC = () => {
                     <li><Link to="/admin/discounts" className="hover:bg-primary/10 hover:text-primary py-3 rounded-xl flex items-center gap-3">🏷️ <span className="flex-1">Règles & Tarification</span></Link></li>
                     <li><Link to="/admin/catalog" className="hover:bg-primary/10 hover:text-primary py-3 rounded-xl flex items-center gap-3">📖 <span className="flex-1">Catalogue d'Offres</span></Link></li>
                   </ul>
+                </li>
+
+                <li>
+                  <Link to="/admin/test-qr" className={`px-4 py-2 flex items-center gap-2 transition-all duration-300 rounded-xl ${location.pathname === '/admin/test-qr' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-primary/10 hover:text-primary'}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
+                    Labo Test
+                  </Link>
                 </li>
               </>
             )}

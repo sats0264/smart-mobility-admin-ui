@@ -5,6 +5,26 @@ import Footer from '../components/Footer';
 import { catalogService } from '../services/catalogService';
 import type { SubscriptionOffer, PassOffer } from '../services/catalogService';
 
+const STYLES = `
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+  .table-row-hover:hover {
+    background-color: hsl(var(--b3));
+    transition: all 0.2s ease;
+    transform: scale(1.005);
+  }
+  .glass-card {
+    background: rgba(var(--b2), 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(var(--bc), 0.1);
+  }
+`;
+
 const CatalogManagement: React.FC = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<'SUBSCRIPTIONS' | 'PASSES'>('SUBSCRIPTIONS');
@@ -146,6 +166,7 @@ const CatalogManagement: React.FC = () => {
 
     return (
         <div className="min-h-screen flex flex-col font-sans bg-base-100">
+            <style>{STYLES}</style>
             <header><Navbar /></header>
             <main className="flex-grow p-8">
                 <div className="max-w-7xl mx-auto">
@@ -176,56 +197,117 @@ const CatalogManagement: React.FC = () => {
                     ) : (
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                             <div className="lg:col-span-2">
-                                <div className="card bg-base-200 shadow-sm">
-                                    <div className="card-body">
-                                        <h2 className="card-title text-2xl mb-4 text-primary">
-                                            {activeTab === 'SUBSCRIPTIONS' ? 'Offres d\'Abonnement' : 'Offres de Pass'}
-                                        </h2>
+                                <div className="card bg-base-200 shadow-xl border border-base-300 overflow-hidden animate-fade-in">
+                                    <div className="card-body p-0">
+                                        <div className="p-6 bg-gradient-to-r from-primary/10 to-transparent">
+                                            <h2 className="card-title text-2xl text-primary flex items-center gap-2">
+                                                {activeTab === 'SUBSCRIPTIONS' ? (
+                                                    <><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg> Offres d'Abonnement</>
+                                                ) : (
+                                                    <><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Offres de Pass</>
+                                                )}
+                                            </h2>
+                                        </div>
                                         <div className="overflow-x-auto">
                                             <table className="table w-full">
-                                                <thead>
+                                                <thead className="bg-base-300/50">
                                                     <tr>
-                                                        <th>Nom</th>
-                                                        <th>Prix</th>
-                                                        <th>Détails</th>
-                                                        <th>Validité</th>
-                                                        <th>Actions</th>
+                                                        <th className="rounded-none text-[10px] uppercase tracking-wider">Nom</th>
+                                                        <th className="text-[10px] uppercase tracking-wider">Prix</th>
+                                                        <th className="text-[10px] uppercase tracking-wider">Type / Offre</th>
+                                                        <th className="text-[10px] uppercase tracking-wider">
+                                                            {activeTab === 'SUBSCRIPTIONS' ? 'Transport' : 'Plafond (Cap)'}
+                                                        </th>
+                                                        <th className="text-[10px] uppercase tracking-wider">Validité</th>
+                                                        <th className="rounded-none text-right text-[10px] uppercase tracking-wider">Actions</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
+                                                <tbody className="divide-y divide-base-300">
                                                     {activeTab === 'SUBSCRIPTIONS' ? (
-                                                        subOffers.map(offer => (
-                                                            <tr key={offer.id}>
-                                                                <td className="font-bold">{offer.name}</td>
-                                                                <td className="text-success font-mono">{offer.price} FCFA</td>
+                                                        subOffers.map((offer, idx) => (
+                                                            <tr key={offer.id} className="table-row-hover group" style={{ animationDelay: `${idx * 0.05}s` }}>
                                                                 <td>
-                                                                    <div className="flex flex-col gap-1">
-                                                                        <span className="badge badge-sm badge-ghost">{offer.subscriptionType}</span>
-                                                                        <span className="text-xs">Remise: {offer.discountPercentage}%</span>
+                                                                    <div className="flex flex-col">
+                                                                        <span className="font-bold text-sm">{offer.name}</span>
+                                                                        <span className="text-[10px] text-base-content/60 italic max-w-xs truncate">{offer.description}</span>
                                                                     </div>
                                                                 </td>
-                                                                <td className="text-xs">{offer.validityDays} jours</td>
-                                                                <td className="flex gap-2">
-                                                                    <button onClick={() => handleEditSub(offer)} className="btn btn-ghost btn-xs text-primary">Modifier</button>
-                                                                    <button onClick={() => offer.id && handleDelete(offer.id)} className="btn btn-ghost btn-xs text-error">Supprimer</button>
+                                                                <td>
+                                                                    <div className="flex flex-col">
+                                                                        <span className="text-success font-bold text-sm font-mono">{offer.price.toLocaleString()} FCFA</span>
+                                                                        <span className="text-[9px] uppercase tracking-wider opacity-50">Tarif Fixe</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div className="flex flex-col gap-1">
+                                                                        <span className="badge badge-primary badge-outline badge-xs font-semibold px-2 py-2">{offer.subscriptionType}</span>
+                                                                        {offer.discountPercentage > 0 && (
+                                                                            <span className="badge badge-accent badge-xs font-bold px-2 py-2">-{offer.discountPercentage}% Remise</span>
+                                                                        )}
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <span className={`badge ${offer.applicableTransport === 'ALL' ? 'badge-secondary' : 'badge-ghost'} badge-xs font-medium px-2 py-2`}>
+                                                                        {offer.applicableTransport === 'ALL' ? 'TOUS' : offer.applicableTransport}
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <div className="flex items-center gap-1">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                                        <span className="text-xs font-medium">{offer.validityDays}j</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td className="text-right">
+                                                                    <div className="flex justify-end gap-1">
+                                                                        <button onClick={() => handleEditSub(offer)} className="btn btn-ghost btn-sm btn-square text-primary tooltip" data-tip="Modifier">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                                                        </button>
+                                                                        <button onClick={() => offer.id && handleDelete(offer.id)} className="btn btn-ghost btn-sm btn-square text-error tooltip" data-tip="Supprimer">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                                                        </button>
+                                                                    </div>
                                                                 </td>
                                                             </tr>
                                                         ))
                                                     ) : (
-                                                        passOffers.map(offer => (
-                                                            <tr key={offer.id}>
-                                                                <td className="font-bold">{offer.name}</td>
-                                                                <td className="text-success font-mono">{offer.price} FCFA</td>
+                                                        passOffers.map((offer, idx) => (
+                                                            <tr key={offer.id} className="table-row-hover group" style={{ animationDelay: `${idx * 0.05}s` }}>
                                                                 <td>
-                                                                    <div className="flex flex-col gap-1">
-                                                                        <span className="badge badge-sm badge-ghost">{offer.passType}</span>
-                                                                        <span className="text-xs">Cap: {offer.dailyCapAmount} FCFA</span>
+                                                                    <div className="flex flex-col">
+                                                                        <span className="font-bold text-sm">{offer.name}</span>
+                                                                        <span className="text-[10px] text-base-content/60 italic max-w-xs truncate">{offer.description}</span>
                                                                     </div>
                                                                 </td>
-                                                                <td className="text-xs">{offer.validityDays} jours</td>
-                                                                <td className="flex gap-2">
-                                                                    <button onClick={() => handleEditPass(offer)} className="btn btn-ghost btn-xs text-primary">Modifier</button>
-                                                                    <button onClick={() => offer.id && handleDelete(offer.id)} className="btn btn-ghost btn-xs text-error">Supprimer</button>
+                                                                <td>
+                                                                    <div className="flex flex-col">
+                                                                        <span className="text-success font-bold text-sm font-mono">{offer.price.toLocaleString()} FCFA</span>
+                                                                        <span className="text-[9px] uppercase tracking-wider opacity-50">Coût d'achat</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <span className="badge badge-secondary badge-outline badge-xs font-semibold px-2 py-2">{offer.passType}</span>
+                                                                </td>
+                                                                <td>
+                                                                    <div className="flex flex-col">
+                                                                        <span className="badge badge-accent badge-soft font-bold text-[10px] px-2 py-2">{offer.dailyCapAmount.toLocaleString()} FCFA</span>
+                                                                        <span className="text-[9px] opacity-40 mt-0.5">PAR JOUR</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div className="flex items-center gap-1">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                                        <span className="text-xs font-medium">{offer.validityDays}j</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td className="text-right">
+                                                                    <div className="flex justify-end gap-1">
+                                                                        <button onClick={() => handleEditPass(offer)} className="btn btn-ghost btn-sm btn-square text-primary tooltip" data-tip="Modifier">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                                                        </button>
+                                                                        <button onClick={() => offer.id && handleDelete(offer.id)} className="btn btn-ghost btn-sm btn-square text-error tooltip" data-tip="Supprimer">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                                                        </button>
+                                                                    </div>
                                                                 </td>
                                                             </tr>
                                                         ))
@@ -261,14 +343,29 @@ const CatalogManagement: React.FC = () => {
                                                 <div className="form-control">
                                                     <label className="label"><span className="label-text">Type d'abonnement</span></label>
                                                     <select className="select select-bordered" value={subType} onChange={e => setSubType(e.target.value)}>
+                                                        <option value="YEARLY">ANNUEL</option>
                                                         <option value="MONTHLY">MENSUEL</option>
                                                         <option value="WEEKLY">HEBDOMADAIRE</option>
-                                                        <option value="ANNUAL">ANNUEL</option>
+                                                        <option value="DAILY">QUOTIDIEN</option>
+                                                    </select>
+                                                </div>
+                                                <div className="form-control">
+                                                    <label className="label"><span className="label-text">Transport applicable</span></label>
+                                                    <select className="select select-bordered" value={transport} onChange={e => setTransport(e.target.value)}>
+                                                        <option value="ALL">TOUS</option>
+                                                        <option value="BUS">BUS</option>
+                                                        <option value="BRT">BRT</option>
+                                                        <option value="TER">TER</option>
                                                     </select>
                                                 </div>
                                                 <div className="form-control">
                                                     <label className="label"><span className="label-text">Remise (%)</span></label>
-                                                    <input type="number" className="input input-bordered" value={discount} onChange={e => setDiscount(e.target.value ? Number(e.target.value) : '')} />
+                                                    <input type="number" min={0} max={100} className="input input-bordered" value={discount} onChange={e => {
+                                                        const val = e.target.value ? Number(e.target.value) : '';
+                                                        if (val === '') return setDiscount('');
+                                                        const clamped = Math.max(0, Math.min(100, Math.round(val)));
+                                                        setDiscount(clamped);
+                                                    }} />
                                                 </div>
                                             </>
                                         ) : (
@@ -278,7 +375,7 @@ const CatalogManagement: React.FC = () => {
                                                     <select className="select select-bordered" value={passType} onChange={e => setPassType(e.target.value)}>
                                                         <option value="STANDARD">STANDARD</option>
                                                         <option value="PREMIUM">PREMIUM</option>
-                                                        <option value="STUDENT">ÉTUDIANT</option>
+                                                        <option value="ETUDIANT">ÉTUDIANT</option>
                                                     </select>
                                                 </div>
                                                 <div className="form-control">

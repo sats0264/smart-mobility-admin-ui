@@ -20,6 +20,10 @@ class ApiService {
     };
   }
 
+  private isAbsoluteUrl(endpoint: string) {
+    return /^https?:\/\//i.test(endpoint);
+  }
+
   async request<T>(
     endpoint: string,
     options: RequestInit = {}
@@ -30,12 +34,23 @@ class ApiService {
         await keycloak.updateToken(30);
       }
 
-      const headers = {
-        ...this.getAuthHeaders(),
-        ...options.headers,
-      };
+      // Si endpoint est absolu, on ne préfixe pas avec API_URL
+      const url = this.isAbsoluteUrl(endpoint) ? endpoint : `${API_URL}${endpoint}`;
 
-      const response = await fetch(`${API_URL}${endpoint}`, {
+      // N'ajouter les headers d'auth que si on appelle le backend interne (même origine API_URL)
+      let headers: HeadersInit = {};
+      if (!this.isAbsoluteUrl(endpoint)) {
+        headers = {
+          ...this.getAuthHeaders(),
+          ...options.headers,
+        };
+      } else {
+        headers = {
+          ...options.headers,
+        };
+      }
+
+      const response = await fetch(url, {
         ...options,
         headers,
       });

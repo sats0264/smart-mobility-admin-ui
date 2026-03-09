@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { tripService } from '../services/tripService';
@@ -36,6 +37,7 @@ const TripManagement: React.FC = () => {
     const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
     const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
     const [isCancelling, setIsCancelling] = useState(false);
+    const [searchParams] = useSearchParams();
 
     const loadData = async () => {
         setIsLoading(true);
@@ -53,7 +55,13 @@ const TripManagement: React.FC = () => {
         }
     };
 
-    useEffect(() => { loadData(); }, []);
+    useEffect(() => {
+        loadData();
+        const userIdParam = searchParams.get('userId');
+        if (userIdParam) {
+            setSearchTerm(userIdParam);
+        }
+    }, [searchParams]);
 
     // Build a lookup: tripId (string) -> transaction
     const txByTripId = useMemo(() => {

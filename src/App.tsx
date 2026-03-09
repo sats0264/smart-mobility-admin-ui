@@ -8,6 +8,7 @@ import BrtManagement from './pages/BrtManagement';
 import TerManagement from './pages/TerManagement';
 import CatalogManagement from './pages/CatalogManagement';
 import RulesManagement from './pages/RulesManagement';
+import UserManagement from './pages/UserManagement';
 import TestQRGenerator from './pages/TestQRGenerator';
 
 function App() {
@@ -60,6 +61,14 @@ function App() {
         element={
           <ProtectedRoute requiredRole="ROLE_ADMIN">
             <CatalogManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <ProtectedRoute requiredRole="ROLE_ADMIN">
+            <UserManagement />
           </ProtectedRoute>
         }
       />

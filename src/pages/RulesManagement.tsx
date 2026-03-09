@@ -194,6 +194,7 @@ const RulesManagement: React.FC = () => {
                                                 <option value="OFFPEAK">Off-Peak (Heures Creuses)</option>
                                                 <option value="LOYALTY">Loyalty (Fidélité)</option>
                                                 <option value="STUDENT">Student (Étudiant)</option>
+                                                {/* TODO For future: add SENIOR, DISABLED types here */}
                                                 <option value="PROMO">Promotion Exceptionnelle</option>
                                             </select>
                                         </div>

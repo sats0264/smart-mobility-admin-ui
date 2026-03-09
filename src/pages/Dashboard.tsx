@@ -78,7 +78,7 @@ const Dashboard: React.FC = () => {
                                 <h2 className="card-title">Utilisateurs</h2>
                                 <p>Gérer les accès et les profils des voyageurs et agents.</p>
                                 <div className="card-actions justify-end mt-4">
-                                    <button className="btn btn-primary btn-sm">Gérer</button>
+                                    <Link to="/admin/users" className="btn btn-primary btn-sm">Gérer les Comptes</Link>
                                 </div>
                             </div>
                         </div>

@@ -73,6 +73,13 @@ const Navbar: React.FC = () => {
                 </li>
 
                 <li>
+                  <Link to="/admin/users" className={`px-4 py-2 flex items-center gap-2 transition-all duration-300 rounded-xl ${location.pathname === '/admin/users' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-primary/10 hover:text-primary'}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4.354l1.1-.553-1.1-.553V4.354zM12 4.354v-1.1L10.9 3.8l1.1.554zM12 4.354l-1.1-.553 1.1-.554v1.107zM12 4.354v1.1l1.1-.553-1.1-.554z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 21v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M23 21v-2a4 4 0 00-3-3.87m-4-8.13a4 4 0 010 7.75" /></svg>
+                    Utilisateurs
+                  </Link>
+                </li>
+
+                <li>
                   <Link to="/admin/test-qr" className={`px-4 py-2 flex items-center gap-2 transition-all duration-300 rounded-xl ${location.pathname === '/admin/test-qr' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-primary/10 hover:text-primary'}`}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
                     Labo Test

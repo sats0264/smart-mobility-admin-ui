@@ -103,12 +103,27 @@ const Dashboard: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="card bg-base-200 shadow-sm">
+                        <div className="card bg-base-200 shadow-sm border border-primary/20 hover:border-primary transition-colors">
                             <div className="card-body">
-                                <h2 className="card-title">Utilisateurs</h2>
+                                <h2 className="card-title text-primary">Utilisateurs</h2>
                                 <p>Gérer les accès et les profils des voyageurs et agents.</p>
                                 <div className="card-actions justify-end mt-4">
                                     <Link to="/admin/users" className="btn btn-primary btn-sm">Gérer les Comptes</Link>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="card bg-neutral text-neutral-content shadow-xl border-t-4 border-success col-span-1 md:col-span-2 lg:col-span-3">
+                            <div className="card-body flex-row items-center justify-between">
+                                <div>
+                                    <h2 className="card-title text-success flex items-center gap-2 text-2xl font-black">
+                                        <div className="w-3 h-3 rounded-full bg-success animate-ping"></div>
+                                        État du Système
+                                    </h2>
+                                    <p className="opacity-70">Tous les services critiques sont opérationnels. Monitoring en temps réel actif.</p>
+                                </div>
+                                <div className="card-actions shrink-0">
+                                    <Link to="/admin/monitoring" className="btn btn-success font-black px-8">Voir le Monitoring Système</Link>
                                 </div>
                             </div>
                         </div>

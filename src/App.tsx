@@ -13,6 +13,7 @@ import BillingManagement from './pages/BillingManagement';
 import TripManagement from './pages/TripManagement';
 import NotificationManagement from './pages/NotificationManagement';
 import TestQRGenerator from './pages/TestQRGenerator';
+import Monitoring from './pages/Monitoring';
 
 function App() {
   return (
@@ -104,6 +105,14 @@ function App() {
         element={
           <ProtectedRoute requiredRole="ROLE_ADMIN">
             <TestQRGenerator />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/monitoring"
+        element={
+          <ProtectedRoute requiredRole="ROLE_ADMIN">
+            <Monitoring />
           </ProtectedRoute>
         }
       />

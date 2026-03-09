@@ -73,6 +73,27 @@ const Navbar: React.FC = () => {
                 </li>
 
                 <li>
+                  <Link to="/admin/billing" className={`px-4 py-2 flex items-center gap-2 transition-all duration-300 rounded-xl ${location.pathname === '/admin/billing' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-primary/10 hover:text-primary'}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                    Finances
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/admin/trips" className={`px-4 py-2 flex items-center gap-2 transition-all duration-300 rounded-xl ${location.pathname === '/admin/trips' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-primary/10 hover:text-primary'}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
+                    Trajets
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/admin/notifications" className={`px-4 py-2 flex items-center gap-2 transition-all duration-300 rounded-xl ${location.pathname === '/admin/notifications' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-primary/10 hover:text-primary'}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                    Notif.
+                  </Link>
+                </li>
+
+                <li>
                   <Link to="/admin/users" className={`px-4 py-2 flex items-center gap-2 transition-all duration-300 rounded-xl ${location.pathname === '/admin/users' ? 'bg-primary text-primary-content shadow-lg shadow-primary/20' : 'hover:bg-primary/10 hover:text-primary'}`}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4.354l1.1-.553-1.1-.553V4.354zM12 4.354v-1.1L10.9 3.8l1.1.554zM12 4.354l-1.1-.553 1.1-.554v1.107zM12 4.354v1.1l1.1-.553-1.1-.554z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 21v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M23 21v-2a4 4 0 00-3-3.87m-4-8.13a4 4 0 010 7.75" /></svg>
                     Utilisateurs

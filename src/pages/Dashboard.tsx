@@ -73,6 +73,36 @@ const Dashboard: React.FC = () => {
                             </div>
                         </div>
 
+                        <div className="card bg-base-200 shadow-sm border border-info/20 hover:border-info transition-colors">
+                            <div className="card-body">
+                                <h2 className="card-title text-info">Finances & Revenus</h2>
+                                <p>Suivre les transactions, les paiements et les revenus globaux du système.</p>
+                                <div className="card-actions justify-end mt-4">
+                                    <Link to="/admin/billing" className="btn btn-info btn-sm">Gérer les Finances</Link>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="card bg-base-200 shadow-sm border border-warning/20 hover:border-warning transition-colors">
+                            <div className="card-body">
+                                <h2 className="card-title text-warning">Gestion des Trajets</h2>
+                                <p>Superviser les voyages en cours, les anomalies et annuler des trajets.</p>
+                                <div className="card-actions justify-end mt-4">
+                                    <Link to="/admin/trips" className="btn btn-warning btn-sm">Voir les Trajets</Link>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="card bg-base-200 shadow-sm border border-secondary/20 hover:border-secondary transition-colors">
+                            <div className="card-body">
+                                <h2 className="card-title text-secondary">🔔 Notifications</h2>
+                                <p>Envoyer des annonces, alertes réseau et informations de maintenance à tous les voyageurs.</p>
+                                <div className="card-actions justify-end mt-4">
+                                    <Link to="/admin/notifications" className="btn btn-secondary btn-sm">Gérer les Notif.</Link>
+                                </div>
+                            </div>
+                        </div>
+
                         <div className="card bg-base-200 shadow-sm">
                             <div className="card-body">
                                 <h2 className="card-title">Utilisateurs</h2>

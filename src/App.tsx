@@ -9,6 +9,9 @@ import TerManagement from './pages/TerManagement';
 import CatalogManagement from './pages/CatalogManagement';
 import RulesManagement from './pages/RulesManagement';
 import UserManagement from './pages/UserManagement';
+import BillingManagement from './pages/BillingManagement';
+import TripManagement from './pages/TripManagement';
+import NotificationManagement from './pages/NotificationManagement';
 import TestQRGenerator from './pages/TestQRGenerator';
 
 function App() {
@@ -69,6 +72,30 @@ function App() {
         element={
           <ProtectedRoute requiredRole="ROLE_ADMIN">
             <UserManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/billing"
+        element={
+          <ProtectedRoute requiredRole="ROLE_ADMIN">
+            <BillingManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/trips"
+        element={
+          <ProtectedRoute requiredRole="ROLE_ADMIN">
+            <TripManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/notifications"
+        element={
+          <ProtectedRoute requiredRole="ROLE_ADMIN">
+            <NotificationManagement />
           </ProtectedRoute>
         }
       />
